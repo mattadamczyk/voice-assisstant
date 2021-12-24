@@ -123,7 +123,8 @@ async def getweather():
     await client.close()
 
 def run_pa(command):
-    if 'today\'s date' in command or 'what day is it' in command:
+    # if 'today\'s date' in command or 'what day is it' in command:
+    if command in ('today\'s date', 'what day is it'):
         todays_date = datetime.today().strftime('%B %d, %Y')
         day = datetime.today().weekday() + 1
         Day_dict = {1: 'Monday', 2: 'Tuesday', 3: 'Wednesday', 4: 'Thursday', 
