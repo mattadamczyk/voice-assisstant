@@ -15,34 +15,12 @@ listener = sr.Recognizer()
 engine = pyttsx3.init()
 voices = engine.getProperty('voices')
 
-##### Check installed voices (optional)
-# Default for Windows 10: 0 is male, 1 is female
-# If you install alternate voice packs, this list might be slightly different, i.e.
-# index -> 0 -- Microsoft David Desktop - English (United States)
-# index -> 1 -- Microsoft Linda - English (Canada)
-# index -> 2 -- Microsoft Susan - English (United Kingdom)
-# index -> 3 -- Microsoft Heera - English (India)
-# index -> 4 -- Microsoft Hazel Desktop - English (Great Britain)
-# index -> 5 -- Microsoft Catherine - English (Australia)
-# index -> 6 -- Microsoft Zira Desktop - English (United States)
-# def check_voice_list():
-#     index = 0
-#     for voice in voices:
-#         print(f'index -> {index} -- {voice.name}')
-#         index +=1
-# check_voice_list()
-
-##### SET VOICE NAME HERE:
-# voices_dict = {0: 'David', 1: 'Linda', 2: 'Susan', 3: 'Heera', 4: 'Hazel', 5: 'Catherine', 6: 'Zira'}
-# voice_num = 4
-# voice_name = voices_dict[voice_num]
-# Note: the voice recognition library can distinguish some names better than others.
-
+# Set voice name here:
 voice_name = "laura"
 engine.setProperty('voice', voices[4].id)
 
-# rate = engine.getProperty('rate')
-# engine.say('My current speaking rate is ' + str(rate))
+# Set locality, for weather forecasting
+localCity="Des Moines IA"
 
 def talk(text):
     engine.say(text)
@@ -90,10 +68,10 @@ async def getweather():
     # declare the client. format defaults to metric system (celcius, km/h, etc.)
     client = python_weather.Client(format=python_weather.IMPERIAL)
 
-    # fetch a weather forecast from a city
-    weather = await client.find("Des Moines IA")
+    # Fetch a weather forecast from a city
+    weather = await client.find(localCity)
 
-    # returns the current day's forecast temperature (int)
+    # Returns the current day's forecast temperature (int)
     temp_now = str(weather.current.temperature)
     sky_now = str(weather.current.sky_text) # sunny, cloudy, etc.
     humid_now = str(weather.current.humidity)
@@ -107,7 +85,7 @@ async def getweather():
     talk('It is ' + sky_now + ', ' + humid_now + ' percent humidity,' + 
         ' wind speed ' + wind_now + ' miles per hour')
 
-    # get the weather forecast for a few days
+    # Get the weather forecast for a few days
     for forecast in weather.forecasts:
         todays_date = datetime.today().strftime('%Y-%m-%d')
         if (str(forecast.date).find(todays_date) != -1):
@@ -119,11 +97,10 @@ async def getweather():
             talk('Today will be ' + sky_forecast + ' with a high of ' + temp_high + ' degrees,' + 
                 'and a ' + precip_forecast + ' percent chance of precipitation.')
 
-    # close the wrapper once done
+    # Close the wrapper once done
     await client.close()
 
 def run_pa(command):
-    # if 'today\'s date' in command or 'what day is it' in command:
     if command in ('today\'s date', 'what day is it'):
         todays_date = datetime.today().strftime('%B %d, %Y')
         day = datetime.today().weekday() + 1
@@ -137,7 +114,7 @@ def run_pa(command):
     elif 'tell' in command and 'joke' in command:
         talk('Ok, Here is a joke:')
         talk(pyjokes.get_joke())
-    elif 'computer' in command or 'is broken' in command or 'problem with' in command:
+    elif command in ('computer', 'is broken', 'problem with'):
         it_crowd()
     elif 'weather' in command:
         if 'forecast' in command:
@@ -148,12 +125,12 @@ def run_pa(command):
         talk('Searching for ' + song + ' on YouTube.')
         talk('Now playing first result for ' + song)
         pywhatkit.playonyt(song)
-    elif 'who' in command or 'what' in command or 'how' in command or 'when' in command or 'why' in command:
+    elif command in ('who', 'what', 'where', 'when', 'why', 'how'):
         talk('I am searching Wikipedia for ' + command)
         question = command
         info = wikipedia.summary(question, 3)
         talk(info)
-    elif 'thank you' in command or 'thanks' in command:
+    elif command in ('thank you', 'thanks'):
         talk('You\'re welcome.')
     else:
         talk('Sorry I did not understand')
