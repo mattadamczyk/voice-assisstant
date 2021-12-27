@@ -10,6 +10,7 @@ import pyaudio
 import sys
 import python_weather
 import asyncio
+import traceback
 
 listener = sr.Recognizer()
 engine = pyttsx3.init()
@@ -21,9 +22,14 @@ engine.setProperty('voice', voices[4].id)
 
 # Set locality, for weather forecasting
 localCity="Des Moines IA"
+# localCity="Detroit MI"
 
 def talk(text):
     engine.say(text)
+
+def talk_and_print(text):
+    engine.say(text)
+    print(text)
 
 def take_command():
     try:
@@ -65,11 +71,13 @@ def wishMe():
     engine.say('How can I help?')
 
 async def getweather():
-    # declare the client. format defaults to metric system (celcius, km/h, etc.)
+    # Declare the client. format defaults to metric system (celcius, km/h, etc.)
     client = python_weather.Client(format=python_weather.IMPERIAL)
 
     # Fetch a weather forecast from a city
     weather = await client.find(localCity)
+
+    talk_and_print('Weather forecast for: ' + str(localCity))
 
     # Returns the current day's forecast temperature (int)
     temp_now = str(weather.current.temperature)
@@ -77,14 +85,10 @@ async def getweather():
     humid_now = str(weather.current.humidity)
     wind_now = str(weather.current.wind_speed)
 
-    print('The current temperature is ' + temp_now + ' degrees.')
-    print('It is ' + sky_now + ', ' + humid_now + ' percent humidity,' + 
+    talk_and_print('The current temperature is ' + temp_now + ' degrees.')
+    talk_and_print('It is ' + sky_now + ', ' + humid_now + ' percent humidity,' + 
         ' wind speed ' + wind_now + ' miles per hour')
     
-    talk('The current temperature is ' + temp_now + ' degrees.')
-    talk('It is ' + sky_now + ', ' + humid_now + ' percent humidity,' + 
-        ' wind speed ' + wind_now + ' miles per hour')
-
     # Get the weather forecast for a few days
     for forecast in weather.forecasts:
         todays_date = datetime.today().strftime('%Y-%m-%d')
@@ -92,9 +96,7 @@ async def getweather():
             sky_forecast = str(forecast.sky_text)
             temp_high = str(forecast.high)
             precip_forecast = str(forecast.precip)
-            print('Today will be ' + sky_forecast + ' with a high of ' + temp_high + ' degrees,' + 
-                'and a ' + precip_forecast + ' percent chance of precipitation.')
-            talk('Today will be ' + sky_forecast + ' with a high of ' + temp_high + ' degrees,' + 
+            talk_and_print('Today will be ' + sky_forecast + ' with a high of ' + temp_high + ' degrees, ' + 
                 'and a ' + precip_forecast + ' percent chance of precipitation.')
 
     # Close the wrapper once done
@@ -118,8 +120,14 @@ def run_pa(command):
         it_crowd()
     elif 'weather' in command:
         if 'forecast' in command:
-            loop = asyncio.get_event_loop()
-            loop.run_until_complete(getweather())
+            try:
+                loop = asyncio.get_event_loop()
+                loop.run_until_complete(getweather())
+            except Exception as ex:
+                print('An error occurred fetching weather forecast data.')
+                print(ex)
+                traceback.print_exc()
+                pass
     elif 'play' in command:
         song = command.replace('play', '')
         talk('Searching for ' + song + ' on YouTube.')
@@ -141,15 +149,19 @@ def main():
         engine.runAndWait()
         command = take_command()
 
-        if command == 'exit' or command == 'quit':
-            sys.exit()
-        elif command == None or command == '':
-            # talk('Sorry I did not hear you')
-            continue
-        elif voice_name in command:
-            get_pa()
-        else:
-            run_pa(command)
+        try:
+            if command == 'exit' or command == 'quit':
+                sys.exit()
+            elif command == None or command == '':
+                # talk('Sorry I did not hear you')
+                continue
+            elif voice_name in command:
+                get_pa()
+            else:
+                run_pa(command)
+        except Exception as ex:
+            traceback.print_exc()
+
 
 if __name__ == "__main__":
     main()
