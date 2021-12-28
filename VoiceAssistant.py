@@ -52,20 +52,14 @@ def take_command():
 
 def get_pa():
     rannum = random.randint(1, 3)
-    if rannum == 1:
-        talk('I am here')
-    elif rannum == 2:
-        talk('Hello')
-    elif rannum == 3:
-        talk('I am listening')
+    greetings_list = [ 'I am here', 'Hello', 'I am listening' ]
+    talk(random.choice(greetings_list))
     talk('How can I help?')
 
 def it_crowd():
     talk('Have you tried turning it off and on again?')
 
 def wishMe():
-    engine.say('Booting ' + voice_name + ' system')
-
     hour = int(datetime.now().hour)
     if hour >= 0 and hour < 12:
         talk('Good morning!')
@@ -154,12 +148,12 @@ def main():
     while True:
         engine.runAndWait()
         command = take_command()
+        # command = input("Enter command: ")
 
         try:
             if command == 'exit' or command == 'quit':
                 sys.exit()
             elif command == None or command == '':
-                # talk('Sorry I did not hear you')
                 continue
             elif voice_name in command:
                 get_pa()
