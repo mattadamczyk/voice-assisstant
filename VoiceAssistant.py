@@ -11,19 +11,25 @@ import sys
 import python_weather
 import asyncio
 import traceback
+import os
+from dotenv import load_dotenv
+
+load_dotenv()
 
 listener = sr.Recognizer()
 engine = pyttsx3.init()
 voices = engine.getProperty('voices')
 
-# Set voice name here:
-voice_name = "laura"
+## Variables
+voice_name = "Not Siri"
 engine.setProperty('voice', voices[4].id)
+city_name = "Detroit MI" # Set locality, for weather forecasting
 
-# Set locality, for weather forecasting
-localCity="Des Moines IA"
-# localCity="Detroit MI"
+# Defaults to values set in .env, if found.
+voice_name = os.getenv('voice_name')
+city_name = os.getenv('city_name')
 
+## Functions
 def talk(text):
     engine.say(text)
 
@@ -46,20 +52,14 @@ def take_command():
 
 def get_pa():
     rannum = random.randint(1, 3)
-    if rannum == 1:
-        talk('I am here')
-    elif rannum == 2:
-        talk('Hello')
-    elif rannum == 3:
-        talk('I am listening')
+    greetings_list = [ 'I am here', 'Hello', 'I am listening' ]
+    talk(random.choice(greetings_list))
     talk('How can I help?')
 
 def it_crowd():
     talk('Have you tried turning it off and on again?')
 
 def wishMe():
-    engine.say('Booting ' + voice_name + ' system')
-
     hour = int(datetime.now().hour)
     if hour >= 0 and hour < 12:
         talk('Good morning!')
@@ -75,9 +75,9 @@ async def getweather():
     client = python_weather.Client(format=python_weather.IMPERIAL)
 
     # Fetch a weather forecast from a city
-    weather = await client.find(localCity)
+    weather = await client.find(city_name)
 
-    talk_and_print('Weather forecast for: ' + str(localCity))
+    talk_and_print('Weather forecast for: ' + str(city_name))
 
     # Returns the current day's forecast temperature (int)
     temp_now = str(weather.current.temperature)
@@ -148,12 +148,12 @@ def main():
     while True:
         engine.runAndWait()
         command = take_command()
+        # command = input("Enter command: ")
 
         try:
             if command == 'exit' or command == 'quit':
                 sys.exit()
             elif command == None or command == '':
-                # talk('Sorry I did not hear you')
                 continue
             elif voice_name in command:
                 get_pa()
