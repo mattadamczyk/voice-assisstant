@@ -1,17 +1,10 @@
 # Voice-assisstant
 A personal voice assistant written in Python
 
+Works with text-to-speech voices available for Windows 10.
+
 ## Check installed voices (optional)
-Default for Windows 10: 0 is male, 1 is female
-```
-def check_voice_list():
-    index = 0
-    for voice in voices:
-        print(f'index -> {index} -- {voice.name}')
-        index +=1
-check_voice_list()
-```
-If you install alternate voice packs, this list might be slightly different, i.e.
+By default Windows 10 comes with 2 voice packs, "David" and "Zira". The program can reference these by id: 0 is male, 1 is female. You may wany to install additional text-to-speech voice packs. If you do, this can change the voice index id, i.e.
 - index -> 0 -- Microsoft David Desktop - English (United States)
 - index -> 1 -- Microsoft Linda - English (Canada)
 - index -> 2 -- Microsoft Susan - English (United Kingdom)
@@ -19,18 +12,28 @@ If you install alternate voice packs, this list might be slightly different, i.e
 - index -> 4 -- Microsoft Hazel Desktop - English (Great Britain)
 - index -> 5 -- Microsoft Catherine - English (Australia)
 - index -> 6 -- Microsoft Zira Desktop - English (United States)
+The function check_voice_list() is included to verify which voice packs are installed and available for use, as well as their id's.
 
 ## Customization
-### You could reference the voice names and id's from a dictionary
+You can set the properties below in your .env file to override the defaults:
+```
+voice_name = "Not Alexa"
+voice_num = 1
+city_name = "Your City"
+```
 Note: the voice recognition module can distinguish some names better than others.
-```
-voices_dict = {0: 'David', 1: 'Linda', 2: 'Susan', 3: 'Heera', 4: 'Hazel', 5: 'Catherine', 6: 'Zira'}
-voice_num = 4
-voice_name = voices_dict[voice_num]
-```
 
-### Check or change voice rate
-```
-rate = engine.getProperty('rate')
-engine.say('My current speaking rate is ' + str(rate))
-```
+## References & Inspiration
+https://stackoverflow.com/questions/65573140/importerror-no-system-module-pywintypes-pywintypes39-dll
+https://stackoverflow.com/questions/51992375/how-to-fix-installation-issues-for-pyaudio-portaudio-fatal-error-c1083-canno
+https://stackoverflow.com/questions/62563668/how-to-make-voice-assistant-wait-for-a-command
+https://pyttsx3.readthedocs.io/en/latest/engine.html#examples
+https://windowsreport.com/unlock-new-text-to-speech-voice-windows-10/
+https://support.microsoft.com/en-us/topic/download-voices-for-immersive-reader-read-mode-and-read-aloud-4c83a8d8-7486-42f7-8e46-2b0fdf753130
+https://stackoverflow.com/questions/44858120/how-to-change-the-voice-in-pyttsx3
+https://support.microsoft.com/en-us/topic/how-to-download-text-to-speech-languages-for-windows-10-d5a6b612-b3ae-423f-afa5-4f6caf1ec5d3
+https://www.thewindowsclub.com/unlock-extra-text-to-speech-voices-in-windows
+http://espeak.sourceforge.net/download.html
+https://origin.geeksforgeeks.org/voice-assistant-using-python/
+https://github.com/nateshmbhat/pyttsx3
+https://pypi.org/project/python-weather/
