@@ -21,15 +21,22 @@ engine = pyttsx3.init()
 voices = engine.getProperty('voices')
 
 ## Variables
-voice_name = "Not Siri"
-engine.setProperty('voice', voices[4].id)
-city_name = "Detroit MI" # Set locality, for weather forecasting
+voice_name = "Not Alexa"
+engine.setProperty('voice', voices[1].id)
+city_name = "Your City" # Set locality, for weather forecasting
 
 # Defaults to values set in .env, if found.
 voice_name = os.getenv('voice_name')
 city_name = os.getenv('city_name')
 
 ## Functions
+def check_voice_list():
+    index = 0
+    for voice in voices:
+        print(f'index -> {index} -- {voice.name}')
+        index +=1
+#check_voice_list()
+
 def talk(text):
     engine.say(text)
 
